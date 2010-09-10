@@ -241,38 +241,34 @@ sub _require_structured_diagnostics_type {
 
 sub _structured_diagnostics {
     my($self, $result) = @_;
-use Data::Dumper;
 
-    unless ( defined $self->structured_diagnostics_type ) {
-       $self->err('structured_diagnostics_type is not defined, _structured_diagnostics was called in error.');
-       return ;
+    my $SD_method = sprintf q{_structured_diagnostics_%s}, $self->structured_diagnostics_type || ''; 
+
+    if ( ! defined $self->structured_diagnostics_type ) {
+        $self->err('structured_diagnostics_type is not defined, _structured_diagnostics was called in error.');
     }
-
-    my $SD_method = sprintf q{_structured_diagnostics_%s}, $self->structured_diagnostics_type;
-    return $self->err( sprintf q{%s does not have a method %s to impliment %s as a structured diagnostics type.},
-                               __PACKAGE__,
-                               $SD_method,
-                               $self->structured_diagnostics_type
-                     );
-    my $struct = { %$result }; # for now just unpack the result
-die Dumper( { STRUCT => $struct } );
-warn 'HELLO';
-    $self->out( 'STRUCT DIAG'. $self->$SD_method($struct) );
+    elsif( ! $self->can($SD_method) ) {
+        $self->err( sprintf q{%s does not have a method %s to impliment %s as a structured diagnostics type.},
+                            __PACKAGE__,
+                            $SD_method,
+                            $self->structured_diagnostics_type
+                  );
+    } 
+    else { 
+        my $struct = { %$result }; # for now just unpack the result
+        $self->out( $self->$SD_method($struct) );
+    }
     return;
 }
 
 sub _structured_diagnostics_JSON {
-    require JSON;
+    require JSON; # should already be done by _require_structured_diagnostics_type but just incase
     my($self, $struct) = @_;
-   
-    my $JSON = JSON->new->allow_nonref->allow_blessed(1)->convert_blessed(1); 
-    #$JSON->allow_blessed(1);
-    #$JSON->convert_blessed(1);
-    $JSON->encode($struct);
+    JSON->new->allow_nonref->allow_blessed(1)->convert_blessed(1)->encode($struct); 
 }
 
 sub _structured_diagnostics_YAML {
-    require YAML;
+    require YAML; # should already be done by _require_structured_diagnostics_type but just incase
     my($self, $struct) = @_;
     YAML::Dump($struct);
 }

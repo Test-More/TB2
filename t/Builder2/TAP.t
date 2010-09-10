@@ -309,7 +309,6 @@ OUT
          q{There is not a method to handle that type},
     );
 }
-
 # structured diag set to JSON
 { 
     new_formatter; 
@@ -319,20 +318,12 @@ OUT
         test_number     => 5,
         diagnostic      => ['moo'],
     );
-    #$formatter->_structured_diagnostics($result);
-    $formatter->_structured_diagnostics_JSON($result);
-    is( last_error,
-        'WHAT IS GOING ON',
-    );
-
+    $formatter->_structured_diagnostics($result);
     is( last_output, 
-        'AHHHHH',
-         q{JSON output},
+        q{{"test_number":5,"diagnostic":["moo"]}},
+        q{JSON output},
     );
-    
-    
 }
-
 
 # structured diag set to YAML
 { 
@@ -343,19 +334,16 @@ OUT
         test_number     => 5,
         diagnostic      => ['moo'],
     );
-    #$formatter->_structured_diagnostics($result);
-    $formatter->_structured_diagnostics_JSON($result);
-    is( last_error,
-        'WHAT IS GOING ON',
-    );
+    $formatter->_structured_diagnostics($result);
     is( last_output, 
-        'AHHHHH',
-         q{YAML output},
+        q{---
+diagnostic:
+  - moo
+test_number: 5
+},
+        q{YAML output},
     );
-    
-    
 }
-
 
 
 

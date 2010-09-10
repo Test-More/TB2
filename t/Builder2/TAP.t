@@ -289,16 +289,24 @@ OUT
 { 
     new_formatter; 
     $formatter->structured_diagnostics_type('MOSDFLKALDFD'); 
-    is( last_error, 'MOSDFLKALDFD failed to resolve as a structured diagnostics type' );
+    is( last_error, 'MOSDFLKALDFD failed to resolve as a structured diagnostics type, disabling structured diagnostics.');
     my $result = Test::Builder2::Result->new_result(
         pass            => 0,
         test_number     => 5,
         diagnostic      => ['moo'],
     );
+    is( $formatter->structured_diagnostics_type, undef, 'crazy value does not get saved' );
     $formatter->_structured_diagnostics($result);
     is( last_error, 
-        'Test::Builder2::Formatter::TAP::v13 does not have a method _structured_diagnostics_MOSDFLKALDFD to impliment MOSDFLKALDFD as a structured diagnostics type.',
-         q{There is not a method to handle that type either},
+        'structured_diagnostics_type is not defined, _structured_diagnostics was called in error.',
+         q{catch to see if we should even bother running _structured_diagnostics},
+    );
+    
+    $formatter->structured_diagnostics_type('Data::Dumper'); # will pass require
+    $formatter->_structured_diagnostics($result);
+    is( last_error, 
+        'Test::Builder2::Formatter::TAP::v13 does not have a method _structured_diagnostics_Data::Dumper to impliment Data::Dumper as a structured diagnostics type.',
+         q{There is not a method to handle that type},
     );
 }
 
@@ -311,15 +319,42 @@ OUT
         test_number     => 5,
         diagnostic      => ['moo'],
     );
-    $formatter->_structured_diagnostics($result);
+    #$formatter->_structured_diagnostics($result);
+    $formatter->_structured_diagnostics_JSON($result);
+    is( last_error,
+        'WHAT IS GOING ON',
+    );
+
     is( last_output, 
-        'Test::Builder2::Formatter::TAP::v13 does not have a method _structured_diagnostics_MOSDFLKALDFD to impliment MOSDFLKALDFD as a structured diagnostics type.',
-         q{There is not a method to handle that type either},
+        'AHHHHH',
+         q{JSON output},
     );
     
     
 }
 
+
+# structured diag set to YAML
+{ 
+    new_formatter; 
+    $formatter->structured_diagnostics_type('YAML'); 
+    my $result = Test::Builder2::Result->new_result(
+        pass            => 0,
+        test_number     => 5,
+        diagnostic      => ['moo'],
+    );
+    #$formatter->_structured_diagnostics($result);
+    $formatter->_structured_diagnostics_JSON($result);
+    is( last_error,
+        'WHAT IS GOING ON',
+    );
+    is( last_output, 
+        'AHHHHH',
+         q{YAML output},
+    );
+    
+    
+}
 
 
 

@@ -232,31 +232,50 @@ sub _require_structured_diagnostics_type {
    return unless defined $type;
 
    eval qq{require $type} 
-    or do { $self->err( sprintf q{%s failed to resolve as a structured diagnostics type},
+    or do { $self->err( sprintf q{%s failed to resolve as a structured diagnostics type, disabling structured diagnostics.},
                        $type
-                     )
+                      );
+            $self->structured_diagnostics_type(undef);
           };
 }
 
 sub _structured_diagnostics {
     my($self, $result) = @_;
+use Data::Dumper;
+
+    unless ( defined $self->structured_diagnostics_type ) {
+       $self->err('structured_diagnostics_type is not defined, _structured_diagnostics was called in error.');
+       return ;
+    }
+
     my $SD_method = sprintf q{_structured_diagnostics_%s}, $self->structured_diagnostics_type;
     return $self->err( sprintf q{%s does not have a method %s to impliment %s as a structured diagnostics type.},
                                __PACKAGE__,
                                $SD_method,
                                $self->structured_diagnostics_type
                      );
-    return $self->$SD_method($result);
+    my $struct = { %$result }; # for now just unpack the result
+die Dumper( { STRUCT => $struct } );
+warn 'HELLO';
+    $self->out( 'STRUCT DIAG'. $self->$SD_method($struct) );
+    return;
 }
 
 sub _structured_diagnostics_JSON {
     require JSON;
-    my($self, $result) = @_;
+    my($self, $struct) = @_;
    
-    my $JSON = JSON->new; 
-    $self->out( $JSON->encode($result) );
+    my $JSON = JSON->new->allow_nonref->allow_blessed(1)->convert_blessed(1); 
+    #$JSON->allow_blessed(1);
+    #$JSON->convert_blessed(1);
+    $JSON->encode($struct);
 }
 
+sub _structured_diagnostics_YAML {
+    require YAML;
+    my($self, $struct) = @_;
+    YAML::Dump($struct);
+}
 
 =head3 comment
 

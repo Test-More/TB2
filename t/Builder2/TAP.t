@@ -23,6 +23,10 @@ sub last_output {
   $formatter->streamer->read('out');
 }
 
+sub last_error {
+  $formatter->streamer->read('err');
+}
+
 # Test the defaults
 {
     my $streamer = Test::Builder2::Streamer::TAP->new; 
@@ -247,6 +251,77 @@ OUT
     $formatter->result($result);
     is(last_output, "ok 4 # SKIP \\nFoo\\nBar\\n\n", "reason with newline");
 }
+
+# Comments diag on by default
+{
+    new_formatter;
+    my $result = Test::Builder2::Result->new_result(
+        pass            => 0,
+        test_number     => 5,
+        diagnostic      => ['moo'],
+    );
+
+    $formatter->result($result);
+    is( last_error, "#   Failed test.\n", 'comment diag ran');
+}
+
+# Turn off Comment diag
+{
+    new_formatter;
+    my $result = Test::Builder2::Result->new_result(
+        pass            => 0,
+        test_number     => 5,
+        diagnostic      => ['moo'],
+    );
+
+    $formatter->show_comment_diagnostics(0);
+    $formatter->result($result);
+    is( last_error, '', 'comment diag off, thus no errors given');
+}
+
+# structured diag default is undef, thus 'turned off'
+{ 
+    new_formatter; 
+    is( $formatter->structured_diagnostics_type, undef, 'default struct diag, undef = off');
+}
+
+# structured diag set trips a require 
+{ 
+    new_formatter; 
+    $formatter->structured_diagnostics_type('MOSDFLKALDFD'); 
+    is( last_error, 'MOSDFLKALDFD failed to resolve as a structured diagnostics type' );
+    my $result = Test::Builder2::Result->new_result(
+        pass            => 0,
+        test_number     => 5,
+        diagnostic      => ['moo'],
+    );
+    $formatter->_structured_diagnostics($result);
+    is( last_error, 
+        'Test::Builder2::Formatter::TAP::v13 does not have a method _structured_diagnostics_MOSDFLKALDFD to impliment MOSDFLKALDFD as a structured diagnostics type.',
+         q{There is not a method to handle that type either},
+    );
+}
+
+# structured diag set to JSON
+{ 
+    new_formatter; 
+    $formatter->structured_diagnostics_type('JSON'); 
+    my $result = Test::Builder2::Result->new_result(
+        pass            => 0,
+        test_number     => 5,
+        diagnostic      => ['moo'],
+    );
+    $formatter->_structured_diagnostics($result);
+    is( last_output, 
+        'Test::Builder2::Formatter::TAP::v13 does not have a method _structured_diagnostics_MOSDFLKALDFD to impliment MOSDFLKALDFD as a structured diagnostics type.',
+         q{There is not a method to handle that type either},
+    );
+    
+    
+}
+
+
+
 
 
 done_testing();

@@ -169,13 +169,18 @@ sub INNER_result {
     $self->out($out);
 
     if(!$result->literal_pass and !$result->is_skip) {
-        # XXX This should also emit structured diagnostics
-        $self->_comment_diagnostics($result);
+        $self->_comment_diagnostics($result) if $self->show_comment_diagnostics;
+        $self->_structured_diagnostics($result) if defined $self->structured_diagnostics_type;
     }
 
     return;
 }
 
+has show_comment_diagnostics => 
+   is => 'rw',
+   isa => 'Bool',
+   default => 1,
+;
 
 # Emit old style comment failure diagnostics
 sub _comment_diagnostics {
@@ -206,6 +211,50 @@ sub _comment_diagnostics {
     $self->$out_method($self->comment("$msg.\n"));
 
     return;
+}
+
+has structured_diagnostics_type => 
+   is => 'rw',
+   isa => 'Maybe[Str]', # should really be an enum(JSON/YAML) 
+   default => sub{undef},
+   trigger => sub{ shift->_require_structured_diagnostics_type },
+;
+sub BUILD { 
+   my $self = shift;
+   $self->_require_structured_diagnostics_type;
+}
+
+sub _require_structured_diagnostics_type {
+   my $self = shift;
+   my $type = $self->structured_diagnostics_type;
+
+   # no need to run anything if we are not using struc_diag
+   return unless defined $type;
+
+   eval qq{require $type} 
+    or do { $self->err( sprintf q{%s failed to resolve as a structured diagnostics type},
+                       $type
+                     )
+          };
+}
+
+sub _structured_diagnostics {
+    my($self, $result) = @_;
+    my $SD_method = sprintf q{_structured_diagnostics_%s}, $self->structured_diagnostics_type;
+    return $self->err( sprintf q{%s does not have a method %s to impliment %s as a structured diagnostics type.},
+                               __PACKAGE__,
+                               $SD_method,
+                               $self->structured_diagnostics_type
+                     );
+    return $self->$SD_method($result);
+}
+
+sub _structured_diagnostics_JSON {
+    require JSON;
+    my($self, $result) = @_;
+   
+    my $JSON = JSON->new; 
+    $self->out( $JSON->encode($result) );
 }
 
 

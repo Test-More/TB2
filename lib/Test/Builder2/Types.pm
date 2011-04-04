@@ -19,7 +19,7 @@ This defines custom Mouse types used by Test::Builder2.
 
 =head2 Types
 
-=head3 Test::Buidler2::Positive_Int
+=head3 Test::Builder2::Positive_Int
 
 An integer greater than or equal to zero.
 
@@ -39,6 +39,20 @@ A class name.  It will be loaded.
 
 subtype 'Test::Builder2::LoadableClass', as 'ClassName';
 coerce 'Test::Builder2::LoadableClass', from 'Str', via { load_class($_); $_ };
+
+
+=head3 Test::Builder2::Label
+
+This is a string but will also accept undef and turn it into an empty string.
+
+=cut
+
+subtype 'Test::Builder2::Label', as 'Str';
+coerce 'Test::Builder2::Label', from 'Undef', via { "" };
+
+
+enum 'Test::Builder2::Result::results' => qw(pass fail skip);
+
 
 no Test::Builder2::Mouse::Util::TypeConstraints;
 

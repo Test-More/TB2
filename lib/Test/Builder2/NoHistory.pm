@@ -13,7 +13,7 @@ Test::Builder2::NoHistory - Store no history, just keep stats
 
     # This is a shared singleton object
     my $history = Test::Builder2::NoHistory->singleton;
-    my $result  = Test::Builder2::Result->new_result( pass => 1 );
+    my $result  = Test::Builder2::Result->new( pass => 1 );
 
     $history->accept_result( $result, $ec );
     $history->is_passing;

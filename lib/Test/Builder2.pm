@@ -338,8 +338,8 @@ sub ok {
 
     $self->assert_start();
 
-    my $result = $self->result_class->new_result(
-        description     => $name,
+    my $result = $self->result_class->new(
+        name            => $name || '',
         pass            => $test,
     );
 

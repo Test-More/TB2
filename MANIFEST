@@ -20,6 +20,7 @@ lib/Test/Builder2/AssertStack.pm
 lib/Test/Builder2/BlackHole.pm
 lib/Test/Builder2/CanDupFilehandles.pm
 lib/Test/Builder2/CanLoad.pm
+lib/Test/Builder2/CanSet.pm
 lib/Test/Builder2/CanTry.pm
 lib/Test/Builder2/Counter.pm
 lib/Test/Builder2/Design.pod
@@ -46,12 +47,6 @@ lib/Test/Builder2/Module.pm
 lib/Test/Builder2/Mouse.pm
 lib/Test/Builder2/NoHistory.pm
 lib/Test/Builder2/Result.pm
-lib/Test/Builder2/Result/Base.pm
-lib/Test/Builder2/Result/Role/fail.pm
-lib/Test/Builder2/Result/Role/pass.pm
-lib/Test/Builder2/Result/Role/skip.pm
-lib/Test/Builder2/Result/Role/todo.pm
-lib/Test/Builder2/Result/Role/unknown.pm
 lib/Test/Builder2/Singleton.pm
 lib/Test/Builder2/Stack.pm
 lib/Test/Builder2/StackBuilder.pm
@@ -222,6 +217,7 @@ t/plan_skip_all.t
 t/pod-coverage.t
 t/pod.t
 t/require_ok.t
+t/Result/ideas.t
 t/shared_event_coordinator.t
 t/Simple/builder.t
 t/Simple/load.t

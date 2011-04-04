@@ -15,21 +15,24 @@ sub accept_event {
     return;
 }
 
-# Map Result types to POSIX types
-my %type_map = (
-    pass        => "PASS",
-    fail        => "FAIL",
-    todo_pass   => 'XPASS',
-    todo_fail   => 'XFAIL',
-    skip_pass   => 'UNTESTED',
-    todo_skip   => 'UNTESTED',
-);
+sub result_type {
+    my $self = shift;
+    my $result = shift;
+
+    my $type = $result->passed  ? "PASS"        :
+               $result->failed  ? "FAIL"        :
+               $result->skipped ? "UNTESTED"    :
+                                  "UNKNOWN"     ;
+    $type = "X$type" if $result->is_todo && !$result->skipped;
+    return $type
+}
 
 sub accept_result {
     my($self, $result) = @_;
 
-    my $type = $type_map{$result->type};
-    $self->write(output => "$type: @{[$result->description]}\n");
+    my $type = $self->result_type($result);
+    my $name = $result->name;
+    $self->write(output => "$type: $name\n");
 
     return;
 }

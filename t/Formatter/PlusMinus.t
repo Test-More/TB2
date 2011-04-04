@@ -28,9 +28,9 @@ my $formatter = new_formatter();
 
 # Pass
 {
-    my $result = Test::Builder2::Result->new_result(
+    my $result = Test::Builder2::Result->new(
         pass            => 1,
-        description     => "basset hounds got long ears",
+        name            => "basset hounds got long ears",
     );
     $formatter->accept_result($result);
     is(
@@ -43,9 +43,9 @@ my $formatter = new_formatter();
 
 # Fail
 {
-    my $result = Test::Builder2::Result->new_result(
+    my $result = Test::Builder2::Result->new(
         pass            => 0,
-        description     => "basset hounds got long ears",
+        name            => "basset hounds got long ears",
     );
     $formatter->accept_result($result);
     is(
@@ -58,10 +58,9 @@ my $formatter = new_formatter();
 
 # Skip
 {
-    my $result = Test::Builder2::Result->new_result(
-        pass            => 1,
-        directives      => [qw(skip)],
-        description     => "basset hounds got long ears",
+    my $result = Test::Builder2::Result->new(
+        skip            => "because",
+        name            => "basset hounds got long ears",
     );
     $formatter->accept_result($result);
     is(

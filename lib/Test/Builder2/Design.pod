@@ -277,10 +277,11 @@ example, here is a simple implementation of is().
         my($have, $want, $name) = @_;
 
         my $result = ok( $have eq $want, $name );
-        $result->diagnostics(
+        $result->add_diag({
             have => $have,
-            want => $want
-        );
+            want => $want,
+            cmp  => "is",
+        });
 
         return $result;
     };
@@ -338,10 +339,11 @@ expand on the is() example above:
         
         my $ok = ok $have, $want, $name;
 
-        $ok->diagnostics(
+        $ok->add_diag({
             have => $have,
             want => $want,
-        );
+            cmp  => "is",
+        });
 
         return $ok;
     }

@@ -15,7 +15,8 @@ use Test::Builder2::EventCoordinator;
 
 with 'Test::Builder2::CanDupFilehandles',
      'Test::Builder2::CanTry',
-     'Test::Builder2::CanLoad';
+     'Test::Builder2::CanLoad',
+     'Test::Builder2::CanSet';
 
 
 =head1 NAME
@@ -776,6 +777,10 @@ sub ok {
         $self->is_passing(0);
         $self->croak("Cannot run test ($name) with active children");
     }
+    else {
+        $name = '' unless defined $name;
+    }
+
     # $test might contain an object which we don't want to accidentally
     # store, so we turn it into a boolean.
     $test = $test ? 1 : 0;
@@ -799,13 +804,14 @@ ERR
 
     # Turn the test into a Result
     my( $pack, $file, $line ) = $self->caller;
-    my $result = Test::Builder2::Result->new_result(
+    my $result = Test::Builder2::Result->new(
         pass            => $test ? 1 : 0,
-        location        => $file,
-        id              => $line,
-        description     => $name,
-        directives      => $in_todo ? ["todo"] : [],
-        reason          => $in_todo ? $todo : undef,
+        file            => $file,
+        line            => $line,
+        name            => $name,
+        directives      => {
+            $in_todo ? ( "todo" => $todo ) : ()
+        }
     );
 
     # Store the Result in history making sure to make it thread safe
@@ -1203,12 +1209,10 @@ sub skip {
 #    lock( $self->history );
 
     my($pack, $file, $line) = $self->caller;
-    my $result = Test::Builder2::Result->new_result(
-        pass      => 1,
-        directives=> ['skip'],
-        reason    => $why,
-        id        => $line,
-        location  => $file,
+    my $result = Test::Builder2::Result->new(
+        skip      => $why,
+        line      => $line,
+        file      => $file,
     );
     $self->post_result($result);
 
@@ -1234,12 +1238,14 @@ sub todo_skip {
 #    lock( $self->history );
 
     my($pack, $file, $line) = $self->caller;
-    my $result = Test::Builder2::Result->new_result(
+    my $result = Test::Builder2::Result->new(
         pass            => 0,
-        directives      => ["todo", "skip"],
-        reason          => $why,
-        location        => $file,
-        id              => $line,
+        directives      => {
+            skip        => $why,
+            todo        => $why
+        },
+        file            => $file,
+        line            => $line,
     );
     $self->post_result($result);
 
@@ -1893,10 +1899,11 @@ sub current_test {
             my $start = @$results ? @$results : 0;
             $counter->set($start);
             for( $start .. $num - 1 ) {
-                my $result = Test::Builder2::Result->new_result(
-                    pass        => 1,
-                    directives  => [qw(unknown)],
-                    reason      => 'incrementing test number',
+                my $result = Test::Builder2::Result->new(
+                    skip        => 'incrementing test number',
+                    directives  => {
+                        unknown => 'incrementing test number',
+                    },
                     test_number => $_
                 );
                 $history->accept_result( shared_clone($result), $self->event_coordinator );
@@ -1957,7 +1964,7 @@ Of course, test #1 is $tests[0], etc...
 sub summary {
     my($self) = shift;
 
-    return map { $_->is_fail ? 0 : 1 } @{$self->history->results};
+    return map { $_ ? 1 : 0 } @{$self->history->results};
 }
 
 =item B<details>
@@ -2014,25 +2021,45 @@ sub details {
     return map { $self->_result_to_hash($_) } @{$self->history->results};
 }
 
+
 sub _result_to_hash {
     my $self = shift;
     my $result = shift;
 
-    my $types = $result->types;
-    my $type = $result->type eq 'todo_skip' ? "todo_skip"        :
-               $types->{unknown}            ? "unknown"          :
-               $types->{todo}               ? "todo"             :
-               $types->{skip}               ? "skip"             :
-                                            ""                 ;
+    my $directives = $result->directives;
 
-    my $actual_ok = $types->{unknown} ? undef : $result->literal_pass;
+    my @types;
+    my $reason = "";
+    my $actual_ok;
+    # special case for "todo_skip" for legacy
+    if( $self->eq_set( [keys %$directives], [qw(todo skip)] ) ) {
+        @types = qw(todo skip);
+        $reason = $directives->{todo};
 
+        # Since it's todo and was never run we assume it's a failure
+        $actual_ok = 0;
+    }
+    # special case "unknown" for legacy
+    elsif( $self->eq_set( [keys %$directives], [qw(skip unknown)] ) ) {
+        @types = ("unknown");
+        $reason = $directives->{unknown};
+        $actual_ok = undef;
+    }
+    else {
+        @types = sort { $a cmp $b } map { lc $_ } keys %$directives;
+        $reason = join ", ",
+                    map { (!defined($_) || !length($_)) ? "no reason given" : $_ }
+                    values %$directives;
+        $actual_ok = $result->passed || $result->skipped ? 1 : 0;
+    }
+
+    my $type = join("_", @types);
     return {
-        'ok'       => $result->is_fail ? 0 : 1,
+        'ok'       => $result ? 1 : 0,
         actual_ok  => $actual_ok,
-        name       => $result->description || "",
-        type       => $type,
-        reason     => $result->reason || "",
+        name       => $result->name || "",
+        type       => $type || '',
+        reason     => $reason,
     };
 }
 
@@ -2341,7 +2368,7 @@ sub _ending {
     if(@$test_results) {
         my $num_extra = $plan->no_plan ? 0 : $self->current_test - $plan->asserts_expected;
             
-        my $num_failed = grep $_->is_fail, @{$test_results}[ 0 .. $self->current_test - 1 ];
+        my $num_failed = grep !$_, @{$test_results}[ 0 .. $self->current_test - 1 ];
 
         if( $num_extra != 0 ) {
             $self->is_passing(0);

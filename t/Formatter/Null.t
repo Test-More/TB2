@@ -17,9 +17,9 @@ my $null = Test::Builder2::Formatter::Null->new(
 }
 
 {
-    my $result = Test::Builder2::Result->new_result(
+    my $result = Test::Builder2::Result->new(
         pass            => 1,
-        description     => "basset hounds got long ears",
+        name            => "basset hounds got long ears",
     );
     $null->accept_result($result);
     is(

@@ -12,11 +12,11 @@ my $CLASS = "Test::Builder2::History";
 require_ok 'Test::Builder2::History';
 
 
-my $Pass = Test::Builder2::Result->new_result(
+my $Pass = Test::Builder2::Result->new(
     pass => 1,
 );
 
-my $Fail = Test::Builder2::Result->new_result(
+my $Fail = Test::Builder2::Result->new(
     pass => 0,
 );
 

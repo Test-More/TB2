@@ -9,7 +9,8 @@ use Test::Builder2::Types;
 use Test::Builder2::threads::shared;
 
 extends 'Test::Builder2::Formatter';
-with 'Test::Builder2::CanLoad';
+with 'Test::Builder2::CanLoad',
+     'Test::Builder2::CanSet';
 
 sub default_streamer_class { 'Test::Builder2::Streamer::TAP' }
 
@@ -171,6 +172,11 @@ has show_ending_commentary =>
   default       => 1
 ;
 
+has uc_directives =>
+  is            => 'rw',
+  isa           => 'Bool',
+  default       => 1,
+;
 
 sub accept_stream_start {
     my $self = shift;
@@ -367,29 +373,37 @@ sub accept_result {
     # result object that I ought to do deal with.
 
     my $out = "";
-    $out .= "not " if !$result->literal_pass;
+    $out .= "not " if $result->failed;
     $out .= "ok";
 
     my $num = $result->test_number || $self->counter->increment;
     $out .= " ".$num if $self->use_numbers;
 
-    my $name = $result->description;
+    my $name = $result->name;
     $self->_escape(\$name);
     $out .= " - $name" if defined $name and length $name;
 
-    my $reason = $result->reason;
-    $self->_escape(\$reason);
+    my %directives = %{$result->directives};
 
-    my @directives;
-    push @directives, "TODO" if $result->is_todo;
-    push @directives, "SKIP" if $result->is_skip;
+    # special case todo skip for legacy formatting
+    if( $self->eq_set([keys %directives], [qw(todo skip)]) ) {
+        %directives = (
+            "todo skip" => $directives{todo}
+        );
+    }
 
-    $out .= " # @{[ join ' ', @directives ]} $reason" if @directives;
+    for my $directive (keys %directives) {
+        my $reason = $directives{$directive};
+        $self->_escape(\$reason);
+
+        $directive = uc $directive if $self->uc_directives;
+        $out .= " # $directive $reason";
+    }
     $out .= "\n";
 
     $self->out($out);
 
-    if(!$result->literal_pass and !$result->is_skip) {
+    if($result->failed && !$result->directives->{skip}) {
         # XXX This should also emit structured diagnostics
         $self->_comment_diagnostics($result);
     }
@@ -413,7 +427,7 @@ sub _comment_diagnostics {
 
     my($file, $line, $name) = map { $result->$_ } qw(file line name);
 
-    if( defined $name ) {
+    if( $name ne '' ) {
         $msg .= " '$name'\n ";
     }
     if( defined $file ) {

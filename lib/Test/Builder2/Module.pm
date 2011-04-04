@@ -64,10 +64,11 @@ Test::Builder2::Module - Write a test module
         my($have, $want, $name) = @_;
 
         my $result = Builder->ok($have eq $want, $name);
-        $result->diagnostic([
+        $result->add_diag({
             have => $have,
-            want => $want
-        ]);
+            want => $want,
+            cmp  => "is"
+        });
 
         return $result;
     });
@@ -93,7 +94,7 @@ writing C<< sub name { ... } >> with two differences.
 
 The prototype of the $code is honored.
 
-$code must return a single Test::Builder2::Result::Base object,
+$code must return a single Test::Builder2::Result object,
 usually the result from C<< Test::Builder2->ok() >> or any other test
 function.
 

@@ -25,14 +25,14 @@ Test::Builder2::Tester - Testing a Test:: module
 
     # The first one passed, and it has a name
     result_like $capture->results->[0], {
-        is_pass => 1,
-        name => "some name",
+        passed => 1,
+        name   => "some name",
     };
 
     # The second one failed, and it has no name
     result_like $capture->results->[1], {
-        is_pass => 0,
-        name => ''
+        failed => 1,
+        name   => ''
     };
 
 =head1 DESCRIPTION

@@ -44,8 +44,8 @@ sub all_output {
 
 my $StreamStart = Test::Builder2::Event::StreamStart->new;
 my $StreamEnd   = Test::Builder2::Event::StreamEnd->new;
-my $Pass        = Test::Builder2::Result->new_result( pass => 1 );
-my $Fail        = Test::Builder2::Result->new_result( pass => 0 );
+my $Pass        = Test::Builder2::Result->new( pass => 1 );
+my $Fail        = Test::Builder2::Result->new( pass => 0 );
 
 note "Good test"; {
     my $ec = new_formatter;

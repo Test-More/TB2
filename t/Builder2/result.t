@@ -5,101 +5,95 @@ use warnings;
 
 BEGIN { require 't/test.pl' }
 
-{
-    package TB2::Formatter::Noop;
-
-    use Test::Builder2::Mouse;
-
-    extends 'Test::Builder2::Formatter';
-
-    sub end { }
-    sub accept_result {} 
-    sub begin {}
-}
-
 my $CLASS = 'Test::Builder2::Result';
 require_ok $CLASS;
 
-note("Running tests using $CLASS");
-tests(sub {
-    my $obj = $CLASS->new_result(@{$_[0]});
-    isa_ok $obj, "Test::Builder2::Result::Base";
-    return $obj;
-});
+note "Pass"; {
+    my $result = new_ok($CLASS, [ pass => 1 ]);
 
-sub tests {
-    my $new_ok = shift;
-
-    note "Pass"; {
-        my $result = $new_ok->([ pass => 1 ]);
-
-        ok $result->is_pass;
-        ok !$result->is_fail;
-        ok !$result->is_todo;
-        ok !$result->is_skip;
-        ok $result;
-    }
-
-    note "Fail"; {
-        my $result = $new_ok->([ pass => 0 ]);
-
-        is $result->type, 'fail';
-        ok !$result;
-    }
-
-
-    note "Skip"; {
-        my $result = $new_ok->([ pass => 1, directives => [qw(skip)] ]);
-
-        is $result->type, 'skip_pass';
-        is $result->reason, undef;
-        ok $result->is_skip;
-        ok $result;
-    }
-
-
-    note "TODO"; {
-        my $result = $new_ok->([ pass => 1, directives => [qw(todo)] ]);
-
-        is $result->type, 'todo_pass';
-        ok $result->is_todo;
-        ok $result;
-    }
-
-    note "skip todo"; {
-        my $result = $new_ok->([ pass => 0, directives => [qw(todo skip)] ]);
-
-        ok $result, 'Chained skip';
-        is $result->type, 'todo_skip';
-        ok $result->is_todo;
-        ok $result->is_skip;
-    }
-
-    note "TODO with no message"; {
-        my $result = $new_ok->([ pass => 0, directives => [qw(todo)] ]);
-
-        ok $result->is_todo(), 'Todo with no message';
-        is $result->reason, undef;
-        ok $result;
-    }
-
-    note "as_hash"; {
-        my $result = $new_ok->([
-            pass            => 1,
-            description     => 'something something something test result',
-            test_number     => 23,
-            location        => 'foo.t',
-            id              => 0,
-        ]);
-
-        is_deeply $result->as_hash, {
-            type            => 'pass',
-            description     => 'something something something test result',
-            test_number     => 23,
-            location        => 'foo.t',
-            id              => 0,
-        }, 'as_hash';
-    }
+    ok $result->passed;
+    ok !$result->failed;
+    ok !$result->is_todo;
+    ok !$result->skipped;
+    is_deeply $result->directives, {};
+    ok $result;
 }
+
+note "Fail"; {
+    my $result = new_ok($CLASS, [ pass => 0 ]);
+
+    ok !$result->passed;
+    ok $result->failed;
+    ok !$result->skipped;
+    ok !$result;
+}
+
+
+note "Skip"; {
+    my $result = new_ok($CLASS, [ skip => 0 ]);
+
+    ok !$result->passed;
+    ok !$result->failed;
+    ok $result->skipped;
+    is $result->skip_reason, 0;
+    ok $result->has_directive("skip");
+    ok $result;
+}
+
+
+note "TODO"; {
+    my $result = new_ok($CLASS, [ pass => 1, todo => 0 ]);
+
+    ok $result->passed;
+    ok $result->is_todo;
+    is $result->todo_reason, 0;
+    ok $result;
+}
+
+note "skip todo"; {
+    my $result = new_ok($CLASS, [ skip => "because", todo => "yeah" ]);
+
+    ok $result;
+    ok $result->is_todo;
+    ok $result->skipped;
+    ok !$result->passed;
+}
+
+note "TODO with no message"; {
+    my $result = new_ok($CLASS, [ pass => 0, todo => undef ]);
+
+    ok $result->is_todo(), 'Todo with no message';
+    is $result->todo_reason, '';
+    ok $result;
+}
+
+note "as_hash"; {
+    my $result = new_ok($CLASS, [
+        pass            => 1,
+        name            => 'something something something test result',
+        test_number     => 23,
+        file            => 'foo.t',
+        line            => 2,
+        have            => 23,
+        want            => 42,
+        cmp             => "==",
+    ]);
+
+    is_deeply $result->as_hash, {
+        result          => 'pass',
+        name            => 'something something something test result',
+        test_number     => 23,
+        file            => 'foo.t',
+        line            => 2,
+        diag            => {
+            have        => 23,
+            want        => 42,
+            cmp         => "==",
+        },
+        directives      => {},
+        event_type      => "result"
+    }, 'as_hash';
+}
+
 
 done_testing;

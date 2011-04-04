@@ -35,9 +35,9 @@ is_deeply $multi->formatters, [$pm, $posix];
 
 # Pass
 {
-    my $result = Test::Builder2::Result->new_result(
+    my $result = Test::Builder2::Result->new(
         pass            => 1,
-        description     => "basset hounds got long ears",
+        name            => "basset hounds got long ears",
     );
     $multi->accept_result($result);
     is($pm->streamer->read, "+", "passing test" );
@@ -47,9 +47,9 @@ is_deeply $multi->formatters, [$pm, $posix];
 
 # Fail
 {
-    my $result = Test::Builder2::Result->new_result(
+    my $result = Test::Builder2::Result->new(
         pass            => 0,
-        description     => "basset hounds got long ears",
+        name            => "basset hounds got long ears",
     );
     $multi->accept_result($result);
     is($pm->streamer->read, "-", "fail" );
@@ -59,10 +59,9 @@ is_deeply $multi->formatters, [$pm, $posix];
 
 # Skip
 {
-    my $result = Test::Builder2::Result->new_result(
-        pass            => 1,
-        directives      => [qw(skip)],
-        description     => "basset hounds got long ears",
+    my $result = Test::Builder2::Result->new(
+        skip            => "because",
+        name            => "basset hounds got long ears",
     );
     $multi->accept_result($result);
     is($pm->streamer->read, "+", "skip" );

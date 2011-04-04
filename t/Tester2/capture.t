@@ -34,12 +34,12 @@ note "capturing results"; {
 
     result_like(
         $results[0],
-        { is_pass  => 1, name => "a pass", file => $0 }
+        { passed  => 1, name => "a pass", file => $0 }
     );
 
     result_like (
         $results[1],
-        { is_pass  => 0, name => "a fail", file => $0 }
+        { failed  => 1, name => "a fail", file => $0 }
     );
 }
 

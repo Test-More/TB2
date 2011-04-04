@@ -1,5 +1,21 @@
 See README and version control log for Test::Builder2 changes.
 
+2.00_08
+    Incompatible Changes (since 2.00_01)
+    * TB2::Result has been simplified.
+      * description, location and id are now just name, file and line.
+      * diagnostics are now diag and take a hash ref
+      * directives take a hash
+      * skip is now a first class result outcome alone with pass and fail
+      * each directive has its own reason
+      * boolean overloading refers to if the result is to be considered pass or fail
+      * new_result() is now simply new()
+      * lots more
+
+    New Features
+    * Results are now editable, including their outcome.
+
+
 2.00_07  Mon, 28 Feb 2011 23:53:22 +1100
     Incompatible Changes (since 2.00_01)
     * TB2::Event::Log now uses symbolic levels, not numeric.  This lets us

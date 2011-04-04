@@ -20,9 +20,9 @@ my $posix = Test::Builder2::Formatter::POSIX->new(
 }
 
 {
-    my $result = Test::Builder2::Result->new_result(
+    my $result = Test::Builder2::Result->new(
         pass            => 1,
-        description     => "basset hounds got long ears",
+        name            => "basset hounds got long ears",
     );
     $posix->accept_result($result);
     is(
@@ -34,9 +34,9 @@ my $posix = Test::Builder2::Formatter::POSIX->new(
 
 
 {
-    my $result = Test::Builder2::Result->new_result(
+    my $result = Test::Builder2::Result->new(
         pass            => 0,
-        description     => "something something something description",
+        name            => "something something something description",
     );
     $posix->accept_result($result);
     is(

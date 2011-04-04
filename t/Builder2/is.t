@@ -26,10 +26,11 @@ local $ENV{HARNESS_ACTIVE} = 0;
 
         $ok->name( $ok->name . " from is" );
 
-        $ok->diagnostic([
+        $ok->add_diag({
             have => $have,
-            want => $want
-        ]);
+            want => $want,
+            cmp  => "is",
+        });
 
         return $ok;
     };

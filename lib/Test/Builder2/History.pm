@@ -17,7 +17,7 @@ Test::Builder2::History - Manage the history of test results
     use Test::Builder2::History;
 
     my $history = Test::Builder2::History->new;
-    my $result  = Test::Builder2::Result->new_result( pass => 1 );
+    my $result  = Test::Builder2::Result->new( pass => 1 );
 
     $history->accept_result( $result, $ec );
     $history->is_passing;
@@ -94,7 +94,7 @@ A Test::Builder2::Stack of Result objects.
 
 =cut
 
-buildstack results => 'Test::Builder2::Result::Base';
+buildstack results => 'Test::Builder2::Result';
 sub accept_result    { shift->results_push(shift) }
 sub accept_results   {   # for testing
     my $self = shift;
@@ -139,10 +139,10 @@ sub has_results { shift->result_count > 0 }
 # to the results stack.
 
 my %statistic_mapping = (
-    pass_count => sub{ shift->is_pass ? 1 : 0 },
-    fail_count => sub{ shift->is_fail ? 1 : 0 },
-    todo_count => sub{ shift->is_todo ? 1 : 0 },
-    skip_count => sub{ shift->is_skip ? 1 : 0 },
+    pass_count => sub{ $_[0] ? 1 : 0 },
+    fail_count => sub{ $_[0] ? 0 : 1 },
+    todo_count => sub{ $_[0]->is_todo ? 1 : 0 },
+    skip_count => sub{ $_[0]->skipped ? 1 : 0 },
     test_count => sub{ 1 },
 );
 
@@ -168,7 +168,7 @@ before results_push => sub{
 
     for my $result (@_) {
         croak "results_push() takes Result objects"
-          if !$self->try(sub { $result->isa('Test::Builder2::Result::Base') });
+          if !$self->try(sub { $result->isa('Test::Builder2::Result') });
     }
 
     $self->_update_statistics(@_);

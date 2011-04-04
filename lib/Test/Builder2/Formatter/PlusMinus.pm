@@ -18,7 +18,7 @@ sub accept_event {
 sub accept_result {
     my($self, $result) = @_;
 
-    my $out = $result->is_fail ? "-" : "+";
+    my $out = $result ? "+" : "-";
     $self->write(output => $out);
 
     return;

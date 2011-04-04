@@ -35,11 +35,11 @@ $builder->event_coordinator->formatters([$tap]);
 
 {
     my $result = $builder->ok(0, "should fail, and add diagnostics");
-    if($result->is_fail)
+    if(!$result)
     {
-        $result->diagnostic([error => "we really made a fine mess this time"]);
+        $result->add_diag({ error => "we really made a fine mess this time" });
     }
-    is_deeply $result->diagnostic, [error => "we really made a fine mess this time"], 
+    is_deeply $result->diag, { error => "we really made a fine mess this time" },
             "diagnostic check";
     is($tap->streamer->read('out'), "not ok 3 - should fail, and add diagnostics\n", 
             'diagnostic output');
@@ -63,7 +63,7 @@ $builder->event_coordinator->formatters([$tap]);
 # ok() should return a Result
 {
     my $ok = $builder->ok(0);
-    isa_ok $ok, "Test::Builder2::Result::Base";
+    isa_ok $ok, "Test::Builder2::Result";
 }
 
 

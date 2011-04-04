@@ -33,8 +33,8 @@ sub last_output {
 note "Escape # in test name"; {
     setup;
 
-    my $result = Test::Builder2::Result->new_result(
-        pass => 1, description => "foo # bar"
+    my $result = Test::Builder2::Result->new(
+        pass => 1, name => "foo # bar"
     );
 
     $ec->post_event(
@@ -48,11 +48,13 @@ note "Escape # in test name"; {
 }
 
 
-note "Escape # in directive description"; {
+note "Escape # in directive reason"; {
     setup;
 
-    my $result = Test::Builder2::Result->new_result(
-        pass => 1, description => "foo # bar", directives => ['todo'], reason => "this # that"
+    my $result = Test::Builder2::Result->new(
+        pass            => 1,
+        name            => "foo # bar",
+        todo            => "this # that"
     );
 
     $ec->post_event(

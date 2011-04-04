@@ -15,6 +15,10 @@ See README and version control log for Test::Builder2 changes.
     New Features
     * Results are now editable, including their outcome.
 
+    Bug Fixes
+    * Results will no longer blow up if you give them an undefined name
+      or an overloaded object [github 137]
+
 
 2.00_07  Mon, 28 Feb 2011 23:53:22 +1100
     Incompatible Changes (since 2.00_01)

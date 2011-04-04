@@ -131,7 +131,8 @@ The human readable name of the assert.  For example...
 has name =>
   is            => 'rw',
   isa           => 'Test::Builder2::Label',
-  default       => ''
+  default       => '',
+  coerce        => 1,
 ;
   
 

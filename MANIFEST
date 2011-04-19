@@ -117,8 +117,6 @@ t/Builder2/Mouse.t
 t/Builder2/Mouse_before_TB2.t
 t/Builder2/NoWarnings.t
 t/Builder2/ok_starts_a_stream.t
-t/Builder2/result.t
-t/Builder2/result_accessors.t
 t/Builder2/SimpleBuilder2.t
 t/Builder2/Singleton.t
 t/Builder2/Stack.t
@@ -217,7 +215,10 @@ t/plan_skip_all.t
 t/pod-coverage.t
 t/pod.t
 t/require_ok.t
-t/Result/ideas.t
+t/Result/basics.t
+t/Result/diag.t
+t/Result/mutable.t
+t/Result/overloaded_name.t
 t/shared_event_coordinator.t
 t/Simple/builder.t
 t/Simple/load.t

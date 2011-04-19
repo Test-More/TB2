@@ -172,7 +172,7 @@ has show_ending_commentary =>
   default       => 1
 ;
 
-has uc_directives =>
+has uc_modifiers =>
   is            => 'rw',
   isa           => 'Bool',
   default       => 1,
@@ -383,27 +383,33 @@ sub accept_result {
     $self->_escape(\$name);
     $out .= " - $name" if defined $name and length $name;
 
-    my %directives = %{$result->directives};
+    my %modifiers = %{$result->modifiers};
+    my %reasons   = %{$result->reasons};
+
+    # TAP considers skip to be a modifier
+    $modifiers{skip} = 1 if $result->skipped;
 
     # special case todo skip for legacy formatting
-    if( $self->eq_set([keys %directives], [qw(todo skip)]) ) {
-        %directives = (
-            "todo skip" => $directives{todo}
+    if( $self->eq_set([keys %modifiers], [qw(todo skip)]) ) {
+        %modifiers = (
+            "todo skip" => 1
         );
+        $reasons{"todo skip"} = $reasons{todo};
     }
 
-    for my $directive (keys %directives) {
-        my $reason = $directives{$directive};
+    for my $modifier (keys %modifiers) {
+        my $reason = $reasons{$modifier};
         $self->_escape(\$reason);
 
-        $directive = uc $directive if $self->uc_directives;
-        $out .= " # $directive $reason";
+        $modifier = uc $modifier if $self->uc_modifiers;
+        $out .= " # $modifier $reason";
     }
     $out .= "\n";
 
     $self->out($out);
 
-    if($result->failed && !$result->directives->{skip}) {
+    # Special case for todo/skip
+    if($result->failed && !$result->modifiers->{skip}) {
         # XXX This should also emit structured diagnostics
         $self->_comment_diagnostics($result);
     }

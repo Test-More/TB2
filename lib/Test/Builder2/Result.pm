@@ -59,8 +59,11 @@ false, C<< result => "fail" >>.
 If C<skip> is given, the test is considered a skip.  The value is the
 reason for the skip.
 
-If C<todo> is given the test is considered "todo" and the result is
-ignored.  The value is the reason for being todo.
+If C<todo> is given the test is given a "todo" modifier.  The value is
+the reason for being todo.
+
+C<reasons> is a hash ref of results or modifiers and their reasons.
+The result will have any modifiers mentioned here.
 
 =cut
 
@@ -68,6 +71,7 @@ sub BUILDARGS {
     my $class = shift;
     my %args = @_;
 
+    # Only allow the result to be specified one way
     my @only_one = qw( result pass skip );
     my @got = grep { exists $args{$_} } @only_one;
     if( @got > 1 ) {
@@ -75,20 +79,30 @@ sub BUILDARGS {
           $class, join(" and ", @got), join(", ", @only_one);
     }
 
-    if( !$args{result} ) {
-        if( exists $args{pass} ) {
-            $args{result} = delete $args{pass} ? "pass" : "fail";
-        }
-        elsif( exists $args{skip} ) {
-            $args{result} = "skip";
-            $args{directives}{skip} = delete $args{skip};
-        }
+    # Translate pass into a result
+    if( exists $args{pass} ) {
+        $args{result} = delete $args{pass} ? "pass" : "fail";
     }
 
+    # Translate skip into a result and reason
+    elsif( exists $args{skip} ) {
+        $args{result} = "skip";
+        $args{reasons}{skip} = delete $args{skip};
+    }
+
+    # Translate todo into a modifier and reason
     if( exists $args{todo} ) {
-        $args{directives}{todo} = delete $args{todo};
+        $args{modifiers}{todo} = 1;
+        $args{reasons}{todo} = delete $args{todo};
     }
 
+    # Translate reasons into modifiers
+    my %results = map { $_ => 1 } qw(pass fail skip);
+    for my $key (keys %{ $args{reasons} || {} }) {
+        $args{modifiers}{$key} = 1 if !$results{$key};
+    }
+
+    # Translate have, want and cmp into diagnostics.
     for my $diag (qw(have want cmp)) {
         next unless exists $args{$diag};
         $args{diag}{$diag} = delete $args{$diag};
@@ -241,27 +255,46 @@ has test_number =>
 ;
 
 
-=head3 directives
+=head3 modifiers
 
-Directives are additional flags which might modify the meaning of the
+Modifiers are additional flags which might modify the meaning of the
 result.
 
-Currently the only directive is "todo" which indicates that the test
+Currently the only modifier is "todo" which indicates that the test
 is expected to fail and should not cause the test suite to fail.
 
-Each directive is a key indicating the type of directive and a value
-which is a reason for its being applied.  For example...
+Each modifier is a key indicating the type of modifiers and a boolean
+value to indicate if it applies.
 
-    $result->directives->{todo} = "bug #1398";
+    $result->modifiers->{todo} = 1;    # this test is todo
 
-By convention, all directives should be lower cased.
+By convention, all modifiers should be lower cased.
+
+Each modifier can have a reason, see L<reasons> for details.
 
 =cut
 
-has directives =>
+has modifiers =>
   is            => 'ro',
-  isa           => 'HashRef',
+  isa           => 'HashRef[Bool]',
   default       => sub { {} }
+;
+
+
+=head3 reasons
+
+Modifiers and results can happen for a reason.
+
+This is a hash of those reasons.  The key is a modifier or result.
+The value is the reason for that modifier or result.  Not everything
+needs a modifier.
+
+=cut
+
+has reasons =>
+  is            => 'ro',
+  isa           => 'HashRef',  # coercion does not work on parameterized types
+  default       => sub { {} },
 ;
 
 
@@ -295,7 +328,7 @@ Useful for quickly dumping the contents of a result.
 
 =cut
 
-my @attributes = qw(result name file line diag test_number directives);
+my @attributes = qw(result name file line diag test_number modifiers reasons);
 sub as_hash {
     my $self = shift;
     return {
@@ -348,7 +381,7 @@ sub skipped {
 
 Returns true if the result should be counted as a failure.  This is
 subtly different from checking C<< $result->failed >> as some
-directives, such as todo, can
+modifiers, such as todo, can
 
 =cut
 
@@ -369,7 +402,8 @@ Returns why the test was skipped, if any.
 =cut
 
 sub skip_reason {
-    return $_[0]->directive_reason("skip");
+    my $reason = $_[0]->reasons->{"skip"};
+    return defined $reason ? $reason : '';
 }
 
 =head3 is_todo
@@ -379,7 +413,7 @@ Returns true if the assert is todo.
 =cut
 
 sub is_todo {
-    return $_[0]->has_directive("todo");
+    return $_[0]->modifiers->{"todo"};
 }
 
 =head3 todo_reason
@@ -389,32 +423,7 @@ Returns why the test is considered todo, if any.
 =cut
 
 sub todo_reason {
-    return $_[0]->directive_reason("todo");
-}
-
-=head3 has_directive
-
-    $result->has_directive($directive);
-
-Returns true if the assert has the given $directive.
-
-=cut
-
-sub has_directive {
-    return exists $_[0]->directives->{$_[1]};
-}
-
-
-=head3 directive_reason
-
-    $result->directive_reason($directive);
-
-Returns why the $directive applies to this assert.
-
-=cut
-
-sub directive_reason {
-    my $reason = $_[0]->directives->{$_[1]};
+    my $reason = $_[0]->reasons->{"todo"};
     return defined $reason ? $reason : '';
 }
 

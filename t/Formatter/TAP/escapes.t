@@ -48,7 +48,7 @@ note "Escape # in test name"; {
 }
 
 
-note "Escape # in directive reason"; {
+note "Escape # in modifier reason"; {
     setup;
 
     my $result = Test::Builder2::Result->new(

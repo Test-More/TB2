@@ -15,7 +15,8 @@ note "Pass"; {
     ok !$result->failed;
     ok !$result->is_todo;
     ok !$result->skipped;
-    is_deeply $result->directives, {};
+    is_deeply $result->modifiers, {};
+    is_deeply $result->reasons, {};
     ok $result;
 }
 
@@ -25,6 +26,8 @@ note "Fail"; {
     ok !$result->passed;
     ok $result->failed;
     ok !$result->skipped;
+    is_deeply $result->modifiers, {};
+    is_deeply $result->reasons, {};
     ok !$result;
 }
 
@@ -36,7 +39,8 @@ note "Skip"; {
     ok !$result->failed;
     ok $result->skipped;
     is $result->skip_reason, 0;
-    ok $result->has_directive("skip");
+    is_deeply $result->reasons, { skip => 0 };
+    ok !$result->modifiers->{"skip"}, "skip is not a modifier";
     ok $result;
 }
 
@@ -57,6 +61,7 @@ note "skip todo"; {
     ok $result->is_todo;
     ok $result->skipped;
     ok !$result->passed;
+    is_deeply $result->reasons, { skip => "because", todo => "yeah" };
 }
 
 note "TODO with no message"; {
@@ -90,7 +95,8 @@ note "as_hash"; {
             want        => 42,
             cmp         => "==",
         },
-        directives      => {},
+        modifiers       => {},
+        reasons         => {},
         event_type      => "result"
     }, 'as_hash';
 }

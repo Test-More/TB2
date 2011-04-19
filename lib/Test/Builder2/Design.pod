@@ -706,7 +706,7 @@ suite and they are the B<only> information used by formatters.
 =head2 result
 
 The information from a single assert.  Includes things like if it
-passed or failed, if it had any directives, its file and line number,
+passed or failed, if it had any modifiers, its file and line number,
 and any additional user specified diagnostics.
 
 A result is a special type of event.
@@ -726,7 +726,7 @@ example, die on assert failure) and even the event itself.
 
 Event watchers get their events through an event coordinator.
 
-=head2 directive
+=head2 modifier
 
 A flag which modifies the result in some way.  For example, C<skip>
 says that the test was skipped.  C<todo> means the test was expected to

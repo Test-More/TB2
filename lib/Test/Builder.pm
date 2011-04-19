@@ -809,7 +809,7 @@ ERR
         file            => $file,
         line            => $line,
         name            => $name,
-        directives      => {
+        reasons         => {
             $in_todo ? ( "todo" => $todo ) : ()
         }
     );
@@ -1240,13 +1240,14 @@ sub todo_skip {
     my($pack, $file, $line) = $self->caller;
     my $result = Test::Builder2::Result->new(
         pass            => 0,
-        directives      => {
+        reasons         => {
             skip        => $why,
             todo        => $why
         },
         file            => $file,
         line            => $line,
     );
+    $result->modifiers->{skip} = 1;
     $self->post_result($result);
 
     return 1;
@@ -1901,7 +1902,7 @@ sub current_test {
             for( $start .. $num - 1 ) {
                 my $result = Test::Builder2::Result->new(
                     skip        => 'incrementing test number',
-                    directives  => {
+                    reasons     => {
                         unknown => 'incrementing test number',
                     },
                     test_number => $_
@@ -2026,30 +2027,34 @@ sub _result_to_hash {
     my $self = shift;
     my $result = shift;
 
-    my $directives = $result->directives;
+    my %modifiers = %{ $result->modifiers };
+    my $reasons   = $result->reasons;
+
+    # For legacy reasons, skip is considered a modifier
+    $modifiers{skip} = 1 if $result->skipped;
 
     my @types;
     my $reason = "";
     my $actual_ok;
     # special case for "todo_skip" for legacy
-    if( $self->eq_set( [keys %$directives], [qw(todo skip)] ) ) {
+    if( $self->eq_set( [keys %modifiers], [qw(todo skip)] ) ) {
         @types = qw(todo skip);
-        $reason = $directives->{todo};
+        $reason = $reasons->{todo} || '';
 
         # Since it's todo and was never run we assume it's a failure
         $actual_ok = 0;
     }
     # special case "unknown" for legacy
-    elsif( $self->eq_set( [keys %$directives], [qw(skip unknown)] ) ) {
+    elsif( $self->eq_set( [keys %modifiers], [qw(skip unknown)] ) ) {
         @types = ("unknown");
-        $reason = $directives->{unknown};
+        $reason = $reasons->{unknown} || '';
         $actual_ok = undef;
     }
     else {
-        @types = sort { $a cmp $b } map { lc $_ } keys %$directives;
+        @types = sort { $a cmp $b } map { lc $_ } keys %modifiers;
         $reason = join ", ",
                     map { (!defined($_) || !length($_)) ? "no reason given" : $_ }
-                    values %$directives;
+                    values %$reasons;
         $actual_ok = $result->passed || $result->skipped ? 1 : 0;
     }
 

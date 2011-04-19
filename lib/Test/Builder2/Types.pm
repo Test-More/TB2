@@ -48,7 +48,7 @@ This is a string but will also accept undef and turn it into an empty string.
 =cut
 
 subtype 'Test::Builder2::Label', as 'Str';
-coerce  'Test::Builder2::Label', from 'Undef', via { "" };
+coerce  'Test::Builder2::Label', from 'Undef',  via { "" };
 coerce  'Test::Builder2::Label', from 'Object', via { "$_" };
 
 

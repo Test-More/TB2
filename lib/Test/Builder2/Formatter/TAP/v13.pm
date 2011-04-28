@@ -9,8 +9,7 @@ use Test::Builder2::Types;
 use Test::Builder2::threads::shared;
 
 extends 'Test::Builder2::Formatter';
-with 'Test::Builder2::CanLoad',
-     'Test::Builder2::CanSet';
+with 'Test::Builder2::CanLoad';
 
 sub default_streamer_class { 'Test::Builder2::Streamer::TAP' }
 
@@ -373,7 +372,7 @@ sub accept_result {
     # result object that I ought to do deal with.
 
     my $out = "";
-    $out .= "not " if $result->failed;
+    $out .= "not " if $result->failed or $result->is_todo_skip;
     $out .= "ok";
 
     my $num = $result->test_number || $self->counter->increment;
@@ -390,7 +389,7 @@ sub accept_result {
     $modifiers{skip} = 1 if $result->skipped;
 
     # special case todo skip for legacy formatting
-    if( $self->eq_set([keys %modifiers], [qw(todo skip)]) ) {
+    if( $result->is_todo_skip ) {
         %modifiers = (
             "todo skip" => 1
         );
@@ -409,7 +408,7 @@ sub accept_result {
     $self->out($out);
 
     # Special case for todo/skip
-    if($result->failed && !$result->modifiers->{skip}) {
+    if( $result->failed ) {
         # XXX This should also emit structured diagnostics
         $self->_comment_diagnostics($result);
     }

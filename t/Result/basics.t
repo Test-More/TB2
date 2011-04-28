@@ -59,6 +59,7 @@ note "skip todo"; {
 
     ok $result;
     ok $result->is_todo;
+    ok $result->is_todo_skip;
     ok $result->skipped;
     ok !$result->passed;
     is_deeply $result->reasons, { skip => "because", todo => "yeah" };

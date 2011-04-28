@@ -15,8 +15,7 @@ use Test::Builder2::EventCoordinator;
 
 with 'Test::Builder2::CanDupFilehandles',
      'Test::Builder2::CanTry',
-     'Test::Builder2::CanLoad',
-     'Test::Builder2::CanSet';
+     'Test::Builder2::CanLoad';
 
 
 =head1 NAME
@@ -1239,9 +1238,8 @@ sub todo_skip {
 
     my($pack, $file, $line) = $self->caller;
     my $result = Test::Builder2::Result->new(
-        pass            => 0,
+        result          => 'skip',
         reasons         => {
-            skip        => $why,
             todo        => $why
         },
         file            => $file,
@@ -2037,15 +2035,14 @@ sub _result_to_hash {
     my $reason = "";
     my $actual_ok;
     # special case for "todo_skip" for legacy
-    if( $self->eq_set( [keys %modifiers], [qw(todo skip)] ) ) {
+    if( $result->is_todo_skip ) {
         @types = qw(todo skip);
         $reason = $reasons->{todo} || '';
 
         # Since it's todo and was never run we assume it's a failure
         $actual_ok = 0;
     }
-    # special case "unknown" for legacy
-    elsif( $self->eq_set( [keys %modifiers], [qw(skip unknown)] ) ) {
+    elsif( $result->skipped && $modifiers{unknown} ) {
         @types = ("unknown");
         $reason = $reasons->{unknown} || '';
         $actual_ok = undef;

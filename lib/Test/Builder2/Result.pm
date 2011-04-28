@@ -428,6 +428,18 @@ sub todo_reason {
 }
 
 
+=head3 is_todo_skip
+
+Returns true if the result is a skip and it has a todo modifier.
+
+=cut
+
+sub is_todo_skip {
+    my $self = shift;
+    return $self->skipped && $self->is_todo
+}
+
+
 =head3 add_diag
 
     $result->add_diag( \%diagnostics );

@@ -1,6 +1,6 @@
 package TB2::Formatter::SimpleHTML;
 
-use TB2::Mouse;
+use Mouse;
 extends "TB2::Formatter";
 
 

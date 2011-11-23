@@ -1,6 +1,6 @@
 package TB2::Formatter::Multi;
 
-use TB2::Mouse;
+use Mouse;
 extends 'TB2::Formatter';
 
 our $VERSION = '1.005000_001';

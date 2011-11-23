@@ -26,7 +26,7 @@ BEGIN {
 {
     package WithThreads;
 
-    use TB2::Mouse;
+    use Mouse;
     with "TB2::CanThread";
 
     has 'stuff' =>
@@ -37,7 +37,7 @@ BEGIN {
 {
     package WithoutThreads;
 
-    use TB2::Mouse;
+    use Mouse;
     with "TB2::CanThread";
 
     has '+coordinate_threads' =>

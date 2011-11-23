@@ -5,7 +5,7 @@ use strict;
 {
     package TB2::Assert;
 
-    use TB2::Mouse;
+    use Mouse;
     with "TB2::EventHandler";
 
     sub handle_result {

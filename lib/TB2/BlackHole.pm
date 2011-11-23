@@ -1,6 +1,6 @@
 package TB2::BlackHole;
 
-use TB2::Mouse;
+use Mouse;
 
 our $VERSION = '1.005000_001';
 $VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)
@@ -46,6 +46,6 @@ out to be a really bad idea.
 
 =cut
 
-no TB2::Mouse;
+no Mouse;
 
 1;

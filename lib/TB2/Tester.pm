@@ -1,6 +1,6 @@
 package TB2::Tester;
 
-use TB2::Mouse;
+use Mouse;
 with "TB2::CanTry";
 
 our $VERSION = '1.005000_001';
@@ -137,7 +137,7 @@ install_test result_like => sub($$;$) {
 };
 
 
-no TB2::Mouse;
+no Mouse;
 
 1;
 

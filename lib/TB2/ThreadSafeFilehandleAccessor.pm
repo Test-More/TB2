@@ -1,7 +1,7 @@
 package TB2::ThreadSafeFilehandleAccessor;
 
-use TB2::Mouse;
-use TB2::Mouse::Util::TypeConstraints;
+use Mouse;
+use Mouse::Util::TypeConstraints;
 
 
 =head1 NAME
@@ -10,7 +10,7 @@ use TB2::Mouse::Util::TypeConstraints;
 
   package Something::That::Stores::Filehandles;
 
-  use TB2::Mouse;
+  use Mouse;
   use TB2::ThreadSafeFilehandleAccessor fh_accessors => [qw(this_fh that_fh)];
 
   my $obj = Something::That::Stores::Filehandles->new(
@@ -107,7 +107,7 @@ L<TB2::Streamer::Print> is the main target for this.
 
 =cut
 
-no TB2::Mouse;
-no TB2::Mouse::Util::TypeConstraints;
+no Mouse;
+no Mouse::Util::TypeConstraints;
 
 1;

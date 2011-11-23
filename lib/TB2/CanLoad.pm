@@ -1,7 +1,7 @@
 package TB2::CanLoad;
 
-require TB2::Mouse;
-use TB2::Mouse::Role;
+require Mouse;
+use Mouse::Role;
 with 'TB2::CanTry';
 
 our $VERSION = '1.005000_001';
@@ -16,7 +16,7 @@ TB2::CanLoad - load modules without effecting global variables
 
     package My::Thing;
 
-    use TB2::Mouse;
+    use Mouse;
     with "TB2::CanLoad";
 
     My::Thing->load("Some::Module");
@@ -71,7 +71,7 @@ L<TB2::CanTry>
 
 =cut
 
-no TB2::Mouse;
-no TB2::Mouse::Role;
+no Mouse;
+no Mouse::Role;
 
 1;

@@ -1,8 +1,8 @@
 package TB2::HasDefault;
 
 use Carp;
-use TB2::Mouse ();
-use TB2::Mouse::Role;
+use Mouse ();
+use Mouse::Role;
 
 our $VERSION = '1.005000_001';
 $VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)
@@ -16,7 +16,7 @@ TB2::HasDefault - A role providing a shared default object
 
   package TB2::Thing;
 
-  use TB2::Mouse;
+  use Mouse;
   with 'TB2::HasDefault';
 
   my $thing      = TB2::Thing->default;
@@ -95,7 +95,7 @@ sub create {
     my $class = shift;
 
     # Mouse injects new(), we can't call SUPER.
-    return $class->TB2::Mouse::Object::new(@_);
+    return $class->Mouse::Object::new(@_);
 }
 
 
@@ -118,6 +118,6 @@ sub make_default {
     return $class->create;
 }
 
-no TB2::Mouse::Role;
+no Mouse::Role;
 
 1;

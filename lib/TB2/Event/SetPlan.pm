@@ -1,7 +1,7 @@
 package TB2::Event::SetPlan;
 
 use TB2::Types;
-use TB2::Mouse;
+use Mouse;
 with 'TB2::Event';
 
 our $VERSION = '1.005000_001';

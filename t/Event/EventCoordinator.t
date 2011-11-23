@@ -113,7 +113,7 @@ note "posting events to specific handlers"; {
     {
         package My::Handler::StartEnd;
         
-        use TB2::Mouse;
+        use Mouse;
         with "TB2::EventHandler";
 
         has starts =>

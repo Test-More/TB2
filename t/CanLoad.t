@@ -8,7 +8,7 @@ BEGIN { require 't/test.pl' }
 {
     package Some::Thing;
 
-    use TB2::Mouse;
+    use Mouse;
     with "TB2::CanLoad";
 }
 

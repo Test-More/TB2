@@ -1,7 +1,7 @@
 package TB2::CanThread;
 
-use TB2::Mouse ();
-use TB2::Mouse::Role;
+use Mouse ();
+use Mouse::Role;
 
 use TB2::threads::shared ();
 
@@ -14,7 +14,7 @@ TB2::CanThread - A role for an object which must be aware of threading
 
     package MyThing;
 
-    use TB2::Mouse;
+    use Mouse;
     with 'TB2::CanThread';
 
     # Don't coordinate with other threads

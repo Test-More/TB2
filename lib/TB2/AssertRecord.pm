@@ -1,6 +1,6 @@
 package TB2::AssertRecord;
 
-use TB2::Mouse;
+use Mouse;
 
 use Carp;
 
@@ -158,6 +158,6 @@ has subroutine =>
   isa           => 'Str',
 ;
 
-no TB2::Mouse;
+no Mouse;
 
 1;

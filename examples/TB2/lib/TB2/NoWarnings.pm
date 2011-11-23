@@ -34,7 +34,7 @@ plan is already set, but it doesn't.
 {
     package TB2::NoWarnings::WarningsHandler;
 
-    use TB2::Mouse;
+    use Mouse;
     with 'TB2::EventHandler';
 
     has builder  =>

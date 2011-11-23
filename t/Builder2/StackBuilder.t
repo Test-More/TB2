@@ -9,7 +9,7 @@ use_ok( 'TB2::StackBuilder' );
 
 BEGIN {
    package My::One;
-   use TB2::Mouse;
+   use Mouse;
    use TB2::StackBuilder;
 }
 
@@ -19,7 +19,7 @@ BEGIN {
 
 BEGIN {
    package My::Two;
-   use TB2::Mouse;
+   use Mouse;
    use TB2::StackBuilder;
    buildstack 'items';
 }
@@ -42,7 +42,7 @@ BEGIN {
 
 BEGIN {
    package My::Three;
-   use TB2::Mouse;
+   use Mouse;
    use TB2::StackBuilder;
    sub nums_count {'buildin'};
    buildstack nums => 'Int';

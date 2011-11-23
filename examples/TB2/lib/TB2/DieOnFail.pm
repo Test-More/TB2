@@ -38,7 +38,7 @@ L<TB2::EventHandler>
 {
     package TB2::DieOnFail::Handler;
 
-    use TB2::Mouse;
+    use Mouse;
     with 'TB2::EventHandler';
 
     sub handle_result {

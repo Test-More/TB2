@@ -1,6 +1,6 @@
 package MyEventCoordinator;
 
-use TB2::Mouse;
+use Mouse;
 extends 'TB2::EventCoordinator';
 
 =head1 NAME
@@ -28,6 +28,6 @@ It makes the following changes:
 has '+formatters' =>
   default       => sub { [] };
 
-no TB2::Mouse;
+no Mouse;
 
 1;

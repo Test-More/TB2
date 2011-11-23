@@ -1,6 +1,6 @@
 package TB2::Streamer::Print;
 
-use TB2::Mouse;
+use Mouse;
 with 'TB2::Streamer', 'TB2::CanDupFilehandles';
 
 our $VERSION = '1.005000_001';
@@ -166,5 +166,5 @@ sub write {
     $self->safe_print($fh, @_);
 }
 
-no TB2::Mouse;
+no Mouse;
 1;

@@ -1,8 +1,8 @@
 package TB2::Result;
 
 use Carp;
-use TB2::Mouse;
-use TB2::Mouse::Util::TypeConstraints qw(enum);
+use Mouse;
+use Mouse::Util::TypeConstraints qw(enum);
 
 our $VERSION = '1.005000_001';
 $VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)
@@ -95,7 +95,7 @@ sub types {
 for my $type (keys %Types) {
     my $roles = $Types{$type};
 
-    TB2::Mouse::Meta::Class->create(
+    Mouse::Meta::Class->create(
         "TB2::Result::$type",
         superclasses => ["TB2::Result::Base"],
         roles        => [map { "TB2::Result::Role::$_" } @$roles],
@@ -134,7 +134,7 @@ sub new_result {
     return "TB2::Result::$type"->new(%args);
 }
 
-no TB2::Mouse;
+no Mouse;
 
 1;
 

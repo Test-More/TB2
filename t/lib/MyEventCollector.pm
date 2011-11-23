@@ -2,7 +2,7 @@
 
 package MyEventCollector;
 
-use TB2::Mouse;
+use Mouse;
 with 'TB2::EventHandler';
 
 has results =>

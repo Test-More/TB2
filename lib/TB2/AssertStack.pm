@@ -1,7 +1,7 @@
 package TB2::AssertStack;
 
 use 5.008001;
-use TB2::Mouse;
+use Mouse;
 use TB2::Types;
 
 our $VERSION = '1.005000_001';
@@ -151,6 +151,6 @@ sub pop {
 }
 
 
-no TB2::Mouse;
+no Mouse;
 
 1;

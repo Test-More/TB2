@@ -2,7 +2,7 @@ package TB2::Formatter::TAP;
 
 use 5.008001;
 
-use TB2::Mouse;
+use Mouse;
 extends 'TB2::Formatter::TAP::v13';
 
 our $VERSION = '1.005000_001';

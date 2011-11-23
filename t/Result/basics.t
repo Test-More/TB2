@@ -8,7 +8,7 @@ BEGIN { require 't/test.pl' }
 {
     package TB2::Formatter::Noop;
 
-    use TB2::Mouse;
+    use Mouse;
 
     extends 'TB2::Formatter';
 

@@ -1,7 +1,7 @@
 package TB2::Formatter;
 
 use Carp;
-use TB2::Mouse;
+use Mouse;
 use TB2::Types;
 
 with 'TB2::EventHandler', 'TB2::CanThread';
@@ -18,7 +18,7 @@ TB2::Formatter - Base class for formating test results
 
   package TB2::Formatter::SomeFormat;
 
-  use TB2::Mouse;
+  use Mouse;
   extends "TB2::Formatter;
 
 =head1 DESCRIPTION

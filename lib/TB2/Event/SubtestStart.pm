@@ -1,6 +1,6 @@
 package TB2::Event::SubtestStart;
 
-use TB2::Mouse;
+use Mouse;
 use TB2::Types;
 with 'TB2::Event';
 
@@ -116,6 +116,6 @@ L<TB2::EventHandler/subtest_handler>  The method called on each Handler when a s
 
 =cut
 
-no TB2::Mouse;
+no Mouse;
 
 1;

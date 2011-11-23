@@ -1,6 +1,6 @@
 package TB2::Event::Abort;
 
-use TB2::Mouse;
+use Mouse;
 with "TB2::Event";
 
 our $VERSION = '1.005000_001';
@@ -57,5 +57,5 @@ has reason =>
 
 
 
-no TB2::Mouse;
+no Mouse;
 1;

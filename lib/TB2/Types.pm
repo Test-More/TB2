@@ -1,8 +1,8 @@
 package TB2::Types;
 
-use TB2::Mouse ();
-use TB2::Mouse::Util qw(load_class);
-use TB2::Mouse::Util::TypeConstraints;
+use Mouse ();
+use Mouse::Util qw(load_class);
+use Mouse::Util::TypeConstraints;
 
 our $VERSION = '1.005000_001';
 $VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)
@@ -67,6 +67,6 @@ A class name.  It will be loaded.
 subtype 'TB2::LoadableClass', as 'ClassName';
 coerce 'TB2::LoadableClass', from 'Str', via { load_class($_); $_ };
 
-no TB2::Mouse::Util::TypeConstraints;
+no Mouse::Util::TypeConstraints;
 
 1;

@@ -1,7 +1,7 @@
 package TB2::Counter;
 
 use Carp;
-use TB2::Mouse;
+use Mouse;
 use TB2::Types;
 
 our $VERSION = '1.005000_001';

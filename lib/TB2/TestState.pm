@@ -1,6 +1,6 @@
 package TB2::TestState;
 
-use TB2::Mouse;
+use Mouse;
 use TB2::Types;
 use TB2::threads::shared;
 
@@ -122,7 +122,7 @@ sub create {
     my %args = @_;
 
     # Roles inject methods, so we can't call SUPER. :(
-    my $self = $class->TB2::Mouse::Object::new(@_);
+    my $self = $class->Mouse::Object::new(@_);
 
     # Store our constructor arguments
     $self->_coordinator_constructor_args(\%args);
@@ -364,7 +364,7 @@ sub _depth {
 }
 
 # Do not make it immutable, we need to add delegate methods dynamically.
-no TB2::Mouse;
+no Mouse;
 
 
 =head1 SEE ALSO

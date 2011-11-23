@@ -1,12 +1,12 @@
 package TB2::EventHandler;
 
-use TB2::Mouse ();
-use TB2::Mouse::Role;
+use Mouse ();
+use Mouse::Role;
 
 our $VERSION = '1.005000_001';
 $VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)
 
-no TB2::Mouse::Role;
+no Mouse::Role;
 
 
 =head1 NAME
@@ -17,7 +17,7 @@ TB2::EventHandler - A role which handles events and results
 
   package My::EventHandler;
 
-  use TB2::Mouse;
+  use Mouse;
   with "TB2::EventHandler";
 
   # handle_result() handles result events
@@ -45,7 +45,7 @@ TB2::EventHandler - A role which handles events and results
       ....
   }
 
-  no TB2::Mouse;
+  no Mouse;
 
 
 =head1 DESCRIPTION
@@ -169,7 +169,7 @@ stream of pluses and minuses.
 
     package My::Formatter::PlusMinus;
 
-    use TB2::Mouse;
+    use Mouse;
 
     # This provides write(), otherwise it's a normal EventHandler
     extends 'TB2::Formatter';

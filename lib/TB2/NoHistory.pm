@@ -1,7 +1,7 @@
 package TB2::NoHistory;
 
 use Carp;
-use TB2::Mouse;
+use Mouse;
 extends qw{TB2::History};
 
 our $VERSION = '1.005000_001';
@@ -57,6 +57,6 @@ sub handle_result {
 
 sub handle_event {}
 
-no TB2::Mouse;
+no Mouse;
 1;
 

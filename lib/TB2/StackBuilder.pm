@@ -1,8 +1,8 @@
 package TB2::StackBuilder;
 
 use 5.008001;
-use TB2::Mouse;
-use TB2::Mouse::Exporter;
+use Mouse;
+use Mouse::Exporter;
 use TB2::Types;
 
 our $VERSION = '1.005000_001';
@@ -47,7 +47,7 @@ Exports a keyword buildstack to build up an Attribute array and methods consista
 
 =cut
 
-TB2::Mouse::Exporter->setup_import_methods(
+Mouse::Exporter->setup_import_methods(
     as_is => [ 'buildstack' ],
 );
 
@@ -75,5 +75,5 @@ sub buildstack ($;$) {
 }
 
 
-no TB2::Mouse;
+no Mouse;
 1;

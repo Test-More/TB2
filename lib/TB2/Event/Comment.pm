@@ -1,6 +1,6 @@
 package TB2::Event::Comment;
 
-use TB2::Mouse;
+use Mouse;
 with 'TB2::Event';
 
 our $VERSION = '1.005000_001';
@@ -44,6 +44,6 @@ has comment =>
   required      => 1
 ;
 
-no TB2::Mouse;
+no Mouse;
 
 1;

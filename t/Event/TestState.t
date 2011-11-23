@@ -219,7 +219,7 @@ note "handlers providing their own subtest_handler"; {
     # Some classes useful for testing subtest_handler is called correctly
     {
         package MyHistory;
-        use TB2::Mouse;
+        use Mouse;
         extends "TB2::History";
 
         has denial =>
@@ -239,7 +239,7 @@ note "handlers providing their own subtest_handler"; {
 
     {
         package MyNullFormatter;
-        use TB2::Mouse;
+        use Mouse;
         extends "TB2::Formatter::Null";
 
         has depth => 
@@ -260,7 +260,7 @@ note "handlers providing their own subtest_handler"; {
 
     {
         package MyEventCollectorSeesAll;
-        use TB2::Mouse;
+        use Mouse;
         extends "MyEventCollector";
 
         # A handler that returns itself

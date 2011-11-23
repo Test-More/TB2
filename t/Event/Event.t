@@ -12,7 +12,7 @@ note "Proper Event role"; {
     ok eval {
         package My::Event;
 
-        use TB2::Mouse;
+        use Mouse;
         with "TB2::Event";
 
         sub as_hash {
@@ -41,7 +41,7 @@ note "Improper Event role";
 ok !eval {
     package My::Bad::Event;
 
-    use TB2::Mouse;
+    use Mouse;
     with "TB2::Event";
 };
 like $@, qr/requires the method/;
@@ -51,7 +51,7 @@ note "Improper Event Type";
 ok !eval {
     package My::Bad::EventType;
 
-    use TB2::Mouse;
+    use Mouse;
     with "TB2::Event";
 
     sub as_hash {

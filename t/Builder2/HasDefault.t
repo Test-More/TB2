@@ -8,7 +8,7 @@ BEGIN { require 't/test.pl' }
 {
     package Foo;
 
-    use TB2::Mouse;
+    use Mouse;
     with 'TB2::HasDefault';
 }
 

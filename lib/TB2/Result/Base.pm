@@ -1,6 +1,6 @@
 package TB2::Result::Base;
 
-use TB2::Mouse;
+use Mouse;
 use TB2::Types;
 with 'TB2::Event';
 
@@ -245,7 +245,7 @@ sub types {
     return \%types;
 }
 
-no TB2::Mouse;
+no Mouse;
 
 1;
 

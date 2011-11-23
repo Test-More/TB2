@@ -1,6 +1,6 @@
 package TB2::EventCoordinator;
 
-use TB2::Mouse;
+use Mouse;
 use TB2::Types;
 with 'TB2::CanLoad', 'TB2::CanThread';
 
@@ -275,6 +275,6 @@ L<TB2::EventHandler>, L<TB2::Event>, L<TB2::Result>
 
 =cut
 
-no TB2::Mouse;
+no Mouse;
 
 1;

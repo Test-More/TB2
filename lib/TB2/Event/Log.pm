@@ -3,8 +3,8 @@ package TB2::Event::Log;
 use Carp;
 
 use TB2::Types;
-use TB2::Mouse;
-use TB2::Mouse::Util::TypeConstraints qw(enum coerce via from);
+use Mouse;
+use Mouse::Util::TypeConstraints qw(enum coerce via from);
 with 'TB2::Event';
 
 our $VERSION = '1.005000_001';
@@ -201,6 +201,6 @@ A valid level for a L<TB2::Event::Log>
 =cut
 
 
-no TB2::Mouse;
+no Mouse;
 
 1;

@@ -1,7 +1,7 @@
 package TB2::Module;
 
 use 5.008001;
-use TB2::Mouse;
+use Mouse;
 with 'TB2::CanTry',
      'TB2::CanLoad';
 

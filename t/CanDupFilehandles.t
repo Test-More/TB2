@@ -12,7 +12,7 @@ use_ok 'TB2::CanDupFilehandles';
 {
     package Some::Class;
 
-    use TB2::Mouse;
+    use Mouse;
     with 'TB2::CanDupFilehandles';
 }
 

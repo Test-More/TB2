@@ -1,6 +1,6 @@
 package TB2::OnlyOnePlan;
 
-use TB2::Mouse;
+use Mouse;
 with 'TB2::EventHandler';
 
 our $VERSION = '1.005000_001';
@@ -122,5 +122,5 @@ sub _plan_location {
 
 
 __PACKAGE__->meta->make_immutable();
-no TB2::Mouse;
+no Mouse;
 1;

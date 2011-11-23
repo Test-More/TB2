@@ -1,6 +1,6 @@
 package TB2::Event::SubtestEnd;
 
-use TB2::Mouse;
+use Mouse;
 use TB2::Types;
 with 'TB2::Event';
 
@@ -62,6 +62,6 @@ L<TB2::SubtestStart>  The cooresponding event which starts the subtest.
 
 =cut
 
-no TB2::Mouse;
+no Mouse;
 
 1;

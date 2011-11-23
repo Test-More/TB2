@@ -2,7 +2,7 @@ package TB2::Formatter::TAP::v13;
 
 use 5.008001;
 
-use TB2::Mouse;
+use Mouse;
 use TB2::Types;
 extends 'TB2::Formatter';
 with 'TB2::CanLoad';

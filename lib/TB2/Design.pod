@@ -508,14 +508,14 @@ avoid this, TB2 will ONLY use its shipped copy of Mouse.  That is, TB2 will
 ship with a copy of Mouse matched to that particular release.
 
 Finally, to avoid stepping on the installed copy of Mouse, TB2 will ship
-its version of Mouse as TB2::Mouse with all internal packages similarly
+its version of Mouse as Mouse with all internal packages similarly
 changed.  This will avoid colliding with Mouse both on disk and in memory.
 
 =head2 Mouse In The Core?
 
 If TB2 ships with Mouse, and TB2 ships in the core of Perl... does that
 mean core Perl will ship Mouse?  No, it is not required that Perl ship
-Mouse.  TB2 will require that core Perl ships TB2::Mouse, but as such it is
+Mouse.  TB2 will require that core Perl ships Mouse, but as such it is
 an internal module of TB2 and should not be used by the public.  Making
 Mouse publicly available in the core is a separate issue and would, in
 fact, require a separate copy of Mouse anyway.

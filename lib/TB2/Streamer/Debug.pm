@@ -1,6 +1,6 @@
 package TB2::Streamer::Debug;
 
-use TB2::Mouse;
+use Mouse;
 with 'TB2::Streamer';
 
 our $VERSION = '1.005000_001';
@@ -91,5 +91,5 @@ sub all_output {
     join '', map { $_->[1] } @{ $self->written_hunks };
 }
 
-no TB2::Mouse::Role;
+no Mouse::Role;
 1;

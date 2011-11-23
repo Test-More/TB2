@@ -12,7 +12,7 @@ use TB2::Events;
 {
     package My::Event::Incrementer;
 
-    use TB2::Mouse;
+    use Mouse;
     with "TB2::EventHandler";
 
     our @Stack;

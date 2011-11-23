@@ -41,7 +41,7 @@ L<TB2::EventHandler>
 {
     package TB2::DebugOnFail::Handler;
 
-    use TB2::Mouse;
+    use Mouse;
     with 'TB2::EventHandler';
 
     sub handle_result {

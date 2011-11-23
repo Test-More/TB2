@@ -10,7 +10,7 @@ note "Positive_Int"; {
     {
         package My::Positive::Int;
 
-        use TB2::Mouse;
+        use Mouse;
         use TB2::Types;
 
         has positive_int =>
@@ -42,7 +42,7 @@ note "Positive_NonZero_Int"; {
     {
         package My::Positive::NonZero::Int;
 
-        use TB2::Mouse;
+        use Mouse;
         use TB2::Types;
 
         has positive_nonzero_int =>

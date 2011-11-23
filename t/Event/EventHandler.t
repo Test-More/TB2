@@ -8,7 +8,7 @@ BEGIN { require 't/test.pl'; }
 {
     package My::Handler;
 
-    use TB2::Mouse;
+    use Mouse;
     with "TB2::EventHandler";
 }
 

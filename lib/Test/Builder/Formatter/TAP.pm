@@ -2,7 +2,7 @@ package Test::Builder::Formatter::TAP;
 
 # This is a subclass for Test::Builder v1 specific changes to the TAP formatter.
 
-use TB2::Mouse;
+use Mouse;
 
 our $VERSION = '1.005000_001';
 $VERSION = eval $VERSION;    ## no critic (BuiltinFunctions::ProhibitStringyEval)

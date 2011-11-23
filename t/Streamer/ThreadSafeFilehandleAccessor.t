@@ -18,7 +18,7 @@ use threads::shared;
 {
     package MyStreamer;
 
-    use TB2::Mouse;
+    use Mouse;
     use TB2::ThreadSafeFilehandleAccessor fh_accessors => [qw(this_fh that_fh)];
 }
 

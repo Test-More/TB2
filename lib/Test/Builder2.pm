@@ -1,7 +1,7 @@
 package Test::Builder2;
 
 use 5.008001;
-use TB2::Mouse;
+use Mouse;
 use TB2::Types;
 use TB2::Events;
 
@@ -60,12 +60,12 @@ object as desired.
 Test::Builder2 is a L<Mouse> object (like Moose, but smaller) to take
 advantage of the advances in OO over the last 10 years.  To avoid
 dependencies and bugs caused by changes in Mouse, Test::Builder2 ships
-and uses its own copy of Mouse called L<TB2::Mouse>.  All
+and uses its own copy of Mouse called L<Mouse>.  All
 Mouse classes have L<TB2::> prepended.
 
 You can take advantage of all the features Mouse has to offer,
 including roles and meta stuff.  You are free to use
-TB2::Mouse in your TB2 derived classes or use Mouse
+Mouse in your TB2 derived classes or use Mouse
 directly.
 
 
@@ -422,7 +422,7 @@ sub subtest {
 }
 
 
-no TB2::Mouse;
+no Mouse;
 
 1;
 

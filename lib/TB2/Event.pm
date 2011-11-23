@@ -1,7 +1,7 @@
 package TB2::Event;
 
-use TB2::Mouse ();
-use TB2::Mouse::Role;
+use Mouse ();
+use Mouse::Role;
 use TB2::Types;
 requires qw( build_event_type );
 
@@ -17,7 +17,7 @@ TB2::Event - A test event role
 
     package My::Event;
 
-    use TB2::Mouse;
+    use Mouse;
     with 'TB2::Event';
 
     sub as_hash    { ... }
@@ -183,6 +183,6 @@ L<TB2::Result>
 
 =cut
 
-no TB2::Mouse::Role;
+no Mouse::Role;
 
 1;

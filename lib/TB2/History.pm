@@ -1,7 +1,7 @@
 package TB2::History;
 
 use Carp;
-use TB2::Mouse;
+use Mouse;
 use TB2::Types;
 use TB2::StackBuilder;
 
@@ -553,6 +553,6 @@ sub consume {
 };
 
 
-no TB2::Mouse;
+no Mouse;
 1;
 

@@ -55,7 +55,7 @@ sub BUILD {
     $self->push_coordinator;
 
     # Initialize the stored EC
-    $self->_sync_forked_ec if $self->coordinate_forks;
+    $self->_sync_forked_ec;
 
     return $self;
 }
@@ -171,7 +171,7 @@ has coordinate_forks =>
 
       # Make sure there's a synced state on disk before we fork.
       # Also make sure we're not in the middle of constructing ourselves.
-      $self->_sync_forked_ec if $self->coordinate_forks and $self->ec;
+      $self->_sync_forked_ec if $self->ec;
 
       return;
   };
@@ -350,13 +350,18 @@ sub post_event {
 	else {
 	    $self->ec->post_event(@args);
 	}
-    }) if $self->coordinate_forks;
+    });
 }
 
 
 sub _sync_forked_ec {
     my $self = shift;
     my $code = shift;
+
+    if( !$self->coordinate_forks ) {
+        return $code->() if $code;
+        return;
+    }
 
     my $ec = $self->ec;
     my $forked_ec = $self->_read_forked_ec;

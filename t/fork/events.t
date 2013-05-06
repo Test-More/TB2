@@ -33,7 +33,7 @@ my $State = TB2::TestState->create(
 
     if ( fork ) {               # parent
         for (1..10) {
-            note "Parent";
+            note "Parent $$:$_";
             $State->post_event(
                 TB2::Result->new_result( pass => 1 )
             );
@@ -41,7 +41,7 @@ my $State = TB2::TestState->create(
     } else {                    # child
         if( fork ) {
             for (1..10) {
-                note "Child";
+                note "Child $$:$_";
                 $State->post_event(
                     TB2::Result->new_result( pass => 1 )
                   );
@@ -49,7 +49,7 @@ my $State = TB2::TestState->create(
         }
         else {                  # grandchild
             for (1..10) {
-                note "Grandchild";
+                note "Grandchild $$:$_";
                 $State->post_event(
                     TB2::Result->new_result( pass => 1 )
                 );
@@ -60,15 +60,19 @@ my $State = TB2::TestState->create(
         }
 
         # Wait for the grandchild
+	note "Waiting for grandchildren";
         wait;
 
         # Exit child
+	note "Child exiting";
         exit;
     }
 
     # Wait for the children to finish up.
+    note "Waiting for children";
     wait;
 
+    note "Ending test";
     $State->post_event(
         TB2::Event::TestEnd->new
     );

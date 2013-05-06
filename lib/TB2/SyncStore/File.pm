@@ -144,7 +144,9 @@ sub get_lock {
 
     return if $self->_locked_by_pid == $$;
 
+    print "# $$ getting lock on @{[ $self->file ]}\n";
     flock $self->fh, LOCK_EX or croak "Can't get an exclusive lock on @{[ $self->file ]}: $!";
+    print "# $$ got lock on @{[ $self->file ]}\n";
 
     $self->_locked_by_pid($$);
 
@@ -166,7 +168,9 @@ sub unlock {
 
     return unless $self->_locked_by_pid == $$;
 
+    print "# $$ unlocking @{[ $self->file ]}\n";
     flock $self->fh, LOCK_UN or croak "Can't unlock @{[ $self->file ]}: $!";
+    print "# $$ unlocked @{[ $self->file ]}\n";
 
     $self->_locked_by_pid(0);
 }

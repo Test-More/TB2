@@ -54,7 +54,8 @@ sub BUILD {
     $self->_coordinator_constructor_args($args);
     $self->push_coordinator;
 
-    $self->_sync_forked_state if $self->coordinate_forks;
+    # Initialize the stored EC
+    $self->_sync_forked_ec if $self->coordinate_forks;
 
     return $self;
 }
@@ -170,7 +171,7 @@ has coordinate_forks =>
 
       # Make sure there's a synced state on disk before we fork.
       # Also make sure we're not in the middle of constructing ourselves.
-      $self->_sync_forked_state if $self->coordinate_forks and $self->ec;
+      $self->_sync_forked_ec if $self->coordinate_forks and $self->ec;
 
       return;
   };
@@ -338,37 +339,40 @@ my %special_handlers = (
 sub post_event {
     my $self  = shift;
 
-    # Don't shift to preserve @_ so we can pass it along in its entirety.
-    my($event) = @_;
+    # Don't shift to preserve @_ so we can pass it on in its entirety.
+    my $event = $_[0];
+    my(@args) = @_;
 
-    $self->_sync_forked_state if $self->coordinate_forks;
-
-    if( my $code = $special_handlers{$event->event_type} ) {
-        $self->$code(@_);
-    }
-    else {
-        $self->ec->post_event(@_);
-    }
-
-    $self->_write_forked_state if $self->coordinate_forks;
+    $self->_sync_forked_ec(sub {
+	if( my $code = $special_handlers{$event->event_type} ) {
+	    $self->$code(@args);
+	}
+	else {
+	    $self->ec->post_event(@args);
+	}
+    }) if $self->coordinate_forks;
 }
 
 
-sub _sync_forked_state {
+sub _sync_forked_ec {
     my $self = shift;
+    my $code = shift;
 
     my $ec = $self->ec;
     my $forked_ec = $self->_read_forked_ec;
 
-    # Nobody's written a state yet
-    return if !$forked_ec;
+    if( $forked_ec ) {
+	# Formatters contain Streamers which contain filehandles which can't
+	# reliably be frozen
+	$forked_ec->formatters( $ec->formatters );
 
-    # Formatters contain Streamers which contain filehandles which can't
-    # reliably be frozen
-    $forked_ec->formatters( $ec->formatters );
+	# Replace our current coordinator with the forked one
+	$self->_coordinators->[-1] = $forked_ec;
+    }
 
-    # Replace our current coordinator with the forked one
-    $self->_coordinators->[-1] = $forked_ec;
+    $code->() if $code;
+
+    $self->_write_forked_ec;
 
     return;
 }
@@ -381,7 +385,7 @@ sub _read_forked_ec {
 }
 
 
-sub _write_forked_state {
+sub _write_forked_ec {
     my $self = shift;
 
     $self->sync_store->write_and_unlock($self->ec);

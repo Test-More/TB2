@@ -49,49 +49,26 @@ Defaults to a temp file.
 
 has file =>
   is            => 'ro',
-  isa           => 'Str|File::Temp',
+  isa           => 'File::Temp',
   required      => 1,
   default       => sub {
       require File::Temp;
 
-      # We have to manage the filehandle ourselves, so don't let
-      # File::Temp open or lock it.
-      return File::Temp::tmpnam();
+      my $tmp = File::Temp->new;
+      flock $tmp, LOCK_UN or croak "Can't unlock $tmp: $!";
+
+      return $tmp;
   };
 
-has _fh =>
+has opened_by_pid =>
   is            => 'rw',
-  isa           => 'FileHandle',
-  lazy          => 1,
-  default       => \&_open_file;
-
-has _opened_by_pid =>
-  is            => 'rw',
-  isa           => 'Int',
-  default       => 0;
-
-has _locked_by_pid =>
-  is            => 'rw',
-  isa           => 'Int',
-  default       => 0;
-
-has _created_by_pid =>
-  is            => 'ro',
   isa           => 'Int',
   default       => $$;
 
-
-sub _open_file {
-    my $self = shift;
-
-    sysopen my $fh, $self->file, O_RDWR|O_CREAT or
-      croak "Can't open @{[ $self->file ]} for reading and writing: $!";
-    $fh->autoflush(1);
-
-    $self->_opened_by_pid($$);
-
-    return $fh;
-}
+has created_by_pid =>
+  is            => 'ro',
+  isa           => 'Int',
+  default       => $$;
 
 
 =head2 Constructors
@@ -114,20 +91,35 @@ writing.  The filehandle is guaranteed to be at position 0.
 
 =cut
 
+sub reopen {
+    my $self = shift;
+
+    my $tmp = $self->file;
+    sysopen $tmp, $tmp, O_RDWR|O_CREAT or
+      croak "Can't reopen $tmp for reading and writing in pid $$: $!";
+    $tmp->autoflush(1);
+
+    $self->opened_by_pid($$);
+
+    return;
+}
+
 sub fh {
     my $self = shift;
 
+    my $tmp = $self->file;
+
     # We forked.  Reopen.
-    if( $self->_opened_by_pid != $$ ) {
-        close $self->_fh;
-        $self->_fh( $self->_open_file );
+    if( $self->opened_by_pid != $$ ) {
+        close $tmp;
+        $self->reopen;
     }
 
-    my $fh = $self->_fh;
-    seek $fh, 0, SEEK_SET or croak "Can't seek back to the begining of @{[ $self->file ]}: $!";
+    seek $tmp, 0, SEEK_SET or croak "Can't seek back to the begining of @{[ $self->file ]}: $!";
 
-    return $fh;
+    return $tmp;
 }
+
 
 =head3 get_lock
 
@@ -142,16 +134,13 @@ Throws an exception if the lock fails.
 sub get_lock {
     my $self = shift;
 
-    return if $self->_locked_by_pid == $$;
-
     print "# $$ getting lock on @{[ $self->file ]}\n";
     flock $self->fh, LOCK_EX or croak "Can't get an exclusive lock on @{[ $self->file ]}: $!";
     print "# $$ got lock on @{[ $self->file ]}\n";
 
-    $self->_locked_by_pid($$);
-
     return;
 }
+
 
 =head3 unlock
 
@@ -166,13 +155,11 @@ Throws an exception if the unlock fails.
 sub unlock {
     my $self = shift;
 
-    return unless $self->_locked_by_pid == $$;
-
     print "# $$ unlocking @{[ $self->file ]}\n";
     flock $self->fh, LOCK_UN or croak "Can't unlock @{[ $self->file ]}: $!";
     print "# $$ unlocked @{[ $self->file ]}\n";
 
-    $self->_locked_by_pid(0);
+    return;
 }
 
 
@@ -212,15 +199,6 @@ sub write_file {
     seek $fh, 0, SEEK_SET or croak "Can't seek back to the begining of @{[ $self->file ]}: $!";
 
     print $fh $contents;
-
-    return;
-}
-
-sub DESTROY {
-    my $self = shift;
-
-    close $self->fh; # some OSes can't unlink an open file
-    unlink $self->file if $self->_created_by_pid == $$;
 
     return;
 }

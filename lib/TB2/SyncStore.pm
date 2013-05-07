@@ -42,21 +42,7 @@ L<TB2::EventCoordinator> objects between forked processes.
 
 Creates a new TB2::SyncStore object.
 
-=head2 Attributes
-
-=head3 directory
-
-Directory where objects will be stored.
-
 =cut
-
-has directory =>
-  is            => 'ro',
-  isa           => 'File::Temp::Dir',
-  default       => sub {
-      require File::Temp;
-      return File::Temp->newdir;
-  };
 
 has _id_to_store =>
   is            => 'ro',
@@ -97,10 +83,7 @@ sub _store_for_id {
         return $store;
     }
     else {
-        require File::Spec;
-        return $id_to_store->{$id} = TB2::SyncStore::File->new(
-            file => File::Spec->catfile($self->directory, $id)
-        );
+        return $id_to_store->{$id} = TB2::SyncStore::File->new;
     }
 }
 

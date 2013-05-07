@@ -21,8 +21,6 @@ if ($pid == 0) { # child
     }
     pass 'child finished';
 
-    note "Child SyncStore directory: ".Test::Builder->new->test_state->sync_store->directory;
-
     1 while wait() != -1;
     exit;
 }
@@ -34,8 +32,6 @@ elsif ($pid) { # parent
     pass 'parent finished';
     waitpid($pid, 0);
     pass 'wait ok';
-
-    note "Parent SyncStore directory: ".Test::Builder->new->test_state->sync_store->directory;
 }
 else {
     die $!;

@@ -35,7 +35,10 @@ note "cleanup"; {
         my $file = TB2::SyncStore::File->new;
         $file->write_file("foo");
         ok -e $file->file;
-        $file->file;
+
+        # Guarantee to return it as a string, not an object
+        # which would cause DESTROY to not be called.
+        $file->file."";
     };
     ok !-e "$path", "it cleans up after itself";
 }
@@ -48,7 +51,7 @@ note "test locking"; SKIP: {
     my $pid;
     if( $pid = fork ) {                 # parent
         $file->get_lock;
-        note "Parent lock";
+        note "Parent $$ lock";
         $file->write_file("foo");
         sleep 2;
         $file->unlock;
@@ -57,7 +60,7 @@ note "test locking"; SKIP: {
     else {                              # child
         sleep 1;
         $file->get_lock;
-        note "Child lock";
+        note "Child $$ lock";
         is $file->read_file, "foo";
         $file->unlock;
         note "Child unlock";

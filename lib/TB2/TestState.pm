@@ -176,18 +176,6 @@ has coordinate_forks =>
   };
 ;
 
-=head2 Misc
-
-=head3 object_id
-
-    my $id = $thing->object_id;
-
-Returns an identifier for this object unique to the running process.
-The identifier is fairly simple and easily predictable.
-
-See L<TB2::HasObjectID> for details.
-
-
 =head2 EventCoordinator methods
 
 TestState contains a stack of L<TB2::EventCoordinator> objects and
@@ -197,29 +185,19 @@ stack.
 The following TB2::EventCoordinator methods can be called on a
 TB2::TestState object and work exactly the same.
 
-=head3 post_event
+=for include
+     module:  TB2::EventCoordinator
+     section: Attributes
+     nodes:   =head
+     replace:
+         $ec: $state
 
-=head3 history
-
-=head3 formatters
-
-=head3 early_handlers
-
-=head3 late_handlers
-
-=head3 all_handlers
-
-=head3 add_early_handlers
-
-=head3 add_formatters
-
-=head3 add_late_handlers
-
-=head3 clear_early_handlers
-
-=head3 clear_formatters
-
-=head3 clear_late_handlers
+=for include
+     module:  TB2::EventCoordinator
+     section: Methods
+     nodes:   =head
+     replace:
+         $ec: $state
 
 =cut
 
